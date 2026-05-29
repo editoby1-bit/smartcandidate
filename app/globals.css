@@ -1,0 +1,99 @@
+/* app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gold: #C9A84C;
+  --gold-l: #F2D98A;
+  --gold-pale: rgba(201,168,76,0.08);
+  --gold-border: rgba(201,168,76,0.18);
+  --gold-border2: rgba(201,168,76,0.38);
+  --green: #1D9E75;
+  --red: #D85A30;
+  --blue: #4A90D9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.18); border-radius: 2px; }
+
+/* Font utilities */
+.font-serif  { font-family: var(--font-serif), Georgia, serif; }
+.font-mono   { font-family: var(--font-mono), monospace; }
+
+/* Gold gradient text */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #C9A84C, #F2D98A);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Status pill base */
+.pill {
+  @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase;
+}
+.pill-green  { @apply bg-[#1D9E75]/10 text-[#1D9E75] border border-[#1D9E75]/30; }
+.pill-red    { @apply bg-[#D85A30]/10 text-[#D85A30] border border-[#D85A30]/30; }
+.pill-gold   { @apply bg-[#C9A84C]/10 text-[#F2D98A] border border-[#C9A84C]/30; }
+.pill-blue   { @apply bg-[#4A90D9]/10 text-[#4A90D9] border border-[#4A90D9]/30; }
+.pill-grey   { @apply bg-white/5 text-white/40 border border-white/10; }
+
+/* Card */
+.card {
+  @apply bg-[#141414] border border-[rgba(201,168,76,0.12)] rounded-xl p-5;
+}
+
+/* Animated pulse dot */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.3; transform: scale(0.7); }
+}
+.pulse-dot { animation: pulse-dot 1.4s ease-in-out infinite; }
+
+/* Sidebar nav item */
+.nav-item {
+  @apply flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[12.5px] font-medium
+         text-white/50 cursor-pointer transition-all hover:text-white/80 hover:bg-white/[0.03];
+}
+.nav-item.active {
+  @apply bg-[rgba(201,168,76,0.08)] border border-[rgba(201,168,76,0.28)] text-[#F2D98A] font-semibold;
+}
+
+/* Input */
+.sc-input {
+  @apply w-full bg-[#1A1A1A] border border-[rgba(201,168,76,0.18)] text-[#F0EDE4]
+         rounded-lg px-3 py-2 text-sm outline-none transition-colors
+         focus:border-[rgba(201,168,76,0.55)] placeholder:text-white/20;
+}
+
+/* Select */
+.sc-select {
+  @apply w-full bg-[#1A1A1A] border border-[rgba(201,168,76,0.18)] text-[#F0EDE4]
+         rounded-lg px-3 py-2 text-sm outline-none cursor-pointer
+         focus:border-[rgba(201,168,76,0.55)];
+}
+
+/* Button variants */
+.btn-gold {
+  @apply bg-[#C9A84C] text-black font-bold text-sm px-4 py-2 rounded-lg
+         hover:bg-[#F2D98A] transition-all hover:-translate-y-px active:scale-95;
+}
+.btn-ghost {
+  @apply bg-transparent text-[#C9A84C] border border-[rgba(201,168,76,0.38)] font-semibold
+         text-sm px-4 py-2 rounded-lg hover:bg-[rgba(201,168,76,0.08)] transition-all;
+}
+.btn-green {
+  @apply bg-[#1D9E75]/10 text-[#1D9E75] border border-[#1D9E75]/30 font-bold
+         text-sm px-4 py-2 rounded-lg hover:bg-[#1D9E75]/20 transition-all;
+}
+.btn-red {
+  @apply bg-[#D85A30]/10 text-[#D85A30] border border-[#D85A30]/30 font-bold
+         text-sm px-4 py-2 rounded-lg hover:bg-[#D85A30]/20 transition-all;
+}
