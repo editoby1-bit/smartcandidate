@@ -1,10 +1,12 @@
-// workers/sms-worker.ts
+import { config } from 'dotenv'
+config({ path: '.env.local' })
+
 import { Worker } from 'bullmq'
 import { createRedis, QUEUE_NAMES, type SendJobData } from '@/lib/messaging/queues'
 import { sendSMS } from '@/lib/messaging/africastalking'
 import { createServiceSupabase } from '@/lib/db/supabase'
 
-const db = createServiceSupabase()
+const db         = createServiceSupabase()
 const connection = createRedis()
 
 console.log('[SMS Worker] Starting —', QUEUE_NAMES.SMS)

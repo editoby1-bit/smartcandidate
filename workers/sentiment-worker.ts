@@ -1,10 +1,12 @@
-// workers/sentiment-worker.ts
+import { config } from 'dotenv'
+config({ path: '.env.local' })
+
 import { Worker } from 'bullmq'
 import { createRedis, QUEUE_NAMES, type SentimentJobData } from '@/lib/messaging/queues'
 import { scoreSentiment } from '@/lib/sentiment/scorer'
 import { createServiceSupabase } from '@/lib/db/supabase'
 
-const db = createServiceSupabase()
+const db         = createServiceSupabase()
 const connection = createRedis()
 
 console.log('[Sentiment Worker] Starting —', QUEUE_NAMES.SENTIMENT)
@@ -13,16 +15,14 @@ const worker = new Worker<SentimentJobData>(
   QUEUE_NAMES.SENTIMENT,
   async (job) => {
     const { response_id, text, candidate_id } = job.data
-
     const result = await scoreSentiment(text)
 
     await db.from('responses').update({
       sentiment:       result.sentiment,
-      sentiment_score: result.sentiment_score ?? result.score,
+      sentiment_score: result.score,
       topic:           result.topic,
     }).eq('id', response_id)
 
-    // Handle opt-outs
     if (result.isOptOut) {
       const { data: resp } = await db
         .from('responses')
@@ -36,17 +36,12 @@ const worker = new Worker<SentimentJobData>(
           opted_out_at:  new Date().toISOString(),
           opted_out_via: resp.channel + '_stop',
         }).eq('id', resp.recipient_id)
-
-        console.log(`[Sentiment] Opt-out recorded for recipient ${resp.recipient_id}`)
       }
     }
 
-    console.log(`[Sentiment] ${response_id} → ${result.sentiment} (${result.score.toFixed(2)}) topic:${result.topic}`)
+    console.log(`[Sentiment] ${response_id} → ${result.sentiment} topic:${result.topic}`)
   },
-  {
-    connection,
-    concurrency: 5, // OpenAI rate limits — keep conservative
-  }
+  { connection, concurrency: 5 }
 )
 
 worker.on('error', err => console.error('[Sentiment Worker]', err))
