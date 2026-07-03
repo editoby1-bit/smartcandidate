@@ -27,6 +27,7 @@
     "clsx": "^2.1.0",
     "csv-parse": "^5.5.3",
     "date-fns": "^3.2.0",
+    "dotenv": "^17.4.2",
     "ioredis": "^5.3.2",
     "lucide-react": "^0.309.0",
     "mapbox-gl": "^3.1.0",
