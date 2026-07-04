@@ -107,3 +107,52 @@ export function parseInboundSMS(body: Record<string, string>) {
     network:   body.networkCode ?? null,
   }
 }
+
+export async function sendSMSBulk(
+  phones: string[],
+  defaultMessage: string,
+  individualMessages?: { phone: string; message: string; recipientId?: string }[]
+): Promise<{ sent: number; failed: number; recipients: any[] }> {
+  try {
+    const allSame = !individualMessages ||
+      individualMessages.every(m => m.message === defaultMessage)
+
+    if (allSame) {
+      const body = new URLSearchParams({
+        username: process.env.AT_USERNAME!,
+        to:       phones.join(','),
+        message:  defaultMessage,
+      })
+      const res  = await fetch(`${AT_BASE}/messaging`, { method: 'POST', headers: getHeaders(), body })
+      const text = await res.text()
+      console.log(`[AT BULK] ${phones.length} numbers — response: ${text.substring(0, 200)}`)
+      let data: any
+      try { data = JSON.parse(text) } catch {
+        return { sent: 0, failed: phones.length, recipients: [] }
+      }
+      const recipients = data?.SMSMessageData?.Recipients ?? []
+      return {
+        sent:       recipients.filter((r: any) => r.status === 'Success').length,
+        failed:     recipients.filter((r: any) => r.status !== 'Success').length,
+        recipients,
+      }
+    } else {
+      const CONCURRENCY = 20
+      const allRecipients: any[] = []
+      let sent = 0, failed = 0
+      for (let i = 0; i < (individualMessages?.length ?? 0); i += CONCURRENCY) {
+        const batch = (individualMessages ?? []).slice(i, i + CONCURRENCY)
+        const results = await Promise.all(batch.map(m => sendSMS(m.phone, m.message)))
+        for (const r of results) {
+          if (r.status === 'success') sent++
+          else failed++
+          allRecipients.push({ number: r.phone, status: r.status === 'success' ? 'Success' : 'Failed', messageId: r.messageId })
+        }
+      }
+      return { sent, failed, recipients: allRecipients }
+    }
+  } catch (err) {
+    console.error('[AT BULK] Error:', err)
+    return { sent: 0, failed: phones.length, recipients: [] }
+  }
+}
