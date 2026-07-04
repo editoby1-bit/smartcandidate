@@ -1,7 +1,7 @@
 // lib/messaging/africastalking.ts
 import { normalisePhone } from '@/lib/utils/geography'
 
-const AT_BASE  = 'https://api.africastalking.com/version1'
+const AT_BASE  = 'https://api.sandbox.africastalking.com/version1'
 const AT_VOICE = 'https://voice.africastalking.com'
 const AT_WA    = 'https://chat.africastalking.com/whatsapp'
 
