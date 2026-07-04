@@ -63,7 +63,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       const result = await sendSMS(
         r.phone,
         message,
-        process.env.AT_SENDER_ID ?? 'SMARTCAND'
+        undefined
       )
 
       if (result.status === 'success') {
