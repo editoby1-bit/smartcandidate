@@ -84,3 +84,26 @@ export async function sendVoiceCall(to: string, callbackUrl?: string) {
   }
 }
 
+
+// Parse delivery receipt from AT webhook callback
+export function parseDeliveryReceipt(body: Record<string, string>) {
+  return {
+    messageId: body.id ?? body.messageId ?? null,
+    phone:     body.phoneNumber ?? body.to ?? null,
+    status:    body.status ?? 'Unknown',
+    failureReason: body.failureReason ?? null,
+    networkCode:   body.networkCode ?? null,
+    retryCount:    body.retryCount ? parseInt(body.retryCount) : 0,
+  }
+}
+
+// Parse inbound SMS from AT webhook
+export function parseInboundSMS(body: Record<string, string>) {
+  return {
+    messageId: body.id ?? null,
+    phone:     body.from ?? null,
+    text:      body.text ?? '',
+    date:      body.date ?? new Date().toISOString(),
+    network:   body.networkCode ?? null,
+  }
+}
