@@ -6,3 +6,6 @@ node_modules
 .env
 *.swp
 .env.local
+.env
+*.swp
+.env.local
